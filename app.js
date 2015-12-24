@@ -11,7 +11,16 @@ var passportHttp = require('passport-http');
 
 
 //step 10
-passport.use(new passportLocal.Strategy(function(username,password,done){
+passport.use(new passportLocal.Strategy(verifyCredentials));
+
+//step 15
+passport.use(new passportHttp.BasicStrategy(verifyCredentials));
+
+
+
+
+
+function verifyCredentials(username,password,done){
 	//pretend this is using a real database
 	if(username === password){
 		console.log("usrname pass equal");
@@ -20,11 +29,9 @@ passport.use(new passportLocal.Strategy(function(username,password,done){
 		console.log("usrname pass not equal");
 		done(null,null);
 	}
-}));
-
+}
 
 //step 11
-
 passport.serializeUser(function(user, done){
 	console.log(user.id);
 	done(null , user.id);
@@ -71,7 +78,8 @@ app.get('/login',function(req,res){
 	res.render('login'); //create login.ejs
 
 });
-
+//step 17
+app.use('/api',passport.authenticate('basic',{ session: false }));
 //step 12
 
 app.get('/logout',function(req,res){
