@@ -7,7 +7,7 @@ var app = express();
 var passport = require('passport');
 
 var passportLocal = require('passport-local');
-
+var passportHttp = require('passport-http');
 
 
 //step 10
@@ -78,6 +78,27 @@ app.get('/logout',function(req,res){
 	req.logout();
 	res.redirect('/');
 });
+ //step 14
+
+function authorizeapi(req,res,next){
+	if(req.isAuthenticated()){
+		next();
+	}
+	else{
+		res.send(403);
+	}
+}
+//step 13
+app.get('/api/data',authorizeapi,function(req,res){
+	res.json(
+		[
+		{ name: 'Man of Steel' } ,
+		{ version: '1.0' } ,
+		{ power: 'Limitless' }
+		]
+	);
+});
+
 
 //step 6 and step 9
 app.post('/login',passport.authenticate('local'),function(req,res){
