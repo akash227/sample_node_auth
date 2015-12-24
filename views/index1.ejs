@@ -22,14 +22,20 @@
         <div class="col s6 m6">
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
-              <span class="card-title titlesize">Login Form</span>
+              
            	 <br>
 						<% if (!isAuthenticated) { %>
+						<span class="card-title titlesize">Login Form</span>
 						<div class="card-action">
 							<a  href="/login"> Log in here </a>
 						</div>
 						<% } else { %>
-							Hello, <%= user.name %>!
+							<span class="card-title titlesize">You are in!</span>
+							Hello, <%= user.name %>! <br>
+							<div class="card-action">
+								<a  href="/logout"> Logout </a>
+							</div>
+							
 						<% } %>
 						
             </div>

@@ -72,6 +72,13 @@ app.get('/login',function(req,res){
 
 });
 
+//step 12
+
+app.get('/logout',function(req,res){
+	req.logout();
+	res.redirect('/');
+});
+
 //step 6 and step 9
 app.post('/login',passport.authenticate('local'),function(req,res){
   res.redirect('/');
