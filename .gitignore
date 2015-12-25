@@ -7,3 +7,6 @@ npm-debug.log
 
 #Proj idea
 .idea/
+
+my.crt
+my.key

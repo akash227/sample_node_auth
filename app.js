@@ -1,3 +1,7 @@
+var fs = require('fs');
+var https = require('https');
+
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
@@ -9,6 +13,11 @@ var passport = require('passport');
 var passportLocal = require('passport-local');
 var passportHttp = require('passport-http');
 
+//step 18
+var server = https.createServer({ 
+	cert: fs.readFileSync(__dirname+'/my.crt'),
+	key:fs.readFileSync(__dirname+'/my.key')
+},app);
 
 //step 10
 passport.use(new passportLocal.Strategy(verifyCredentials));
@@ -116,7 +125,11 @@ app.post('/login',passport.authenticate('local'),function(req,res){
 var port  = 3000;
 
 //step 1
-app.listen(port,function(){
+server.listen(port,function(){
 
 	console.log("Listening to port, %d",port);
 });
+
+
+//step 17
+//securing with ssl-- openssl req -x509 -nodes -days 365 -newkey rsa:1024 -out my.crt -keyout my.key
