@@ -1,5 +1,7 @@
 var fs = require('fs');
 var https = require('https');
+var mongoose = require('mongoose');
+
 
 
 var express = require('express');
@@ -19,6 +21,16 @@ var server = https.createServer({
 	key:fs.readFileSync(__dirname+'/my.key')
 },app);
 
+//step 19 
+mongoose.connect('mongodb://localhost:27017/test1');
+var userSchema = new mongoose.Schema({
+	username: {type:String , unique:true , required:true},
+	password: {type:String , required:true}
+});
+
+var User = mongoose.model('User',userSchema,'users');
+
+
 //step 10
 passport.use(new passportLocal.Strategy(verifyCredentials));
 
@@ -31,13 +43,36 @@ passport.use(new passportHttp.BasicStrategy(verifyCredentials));
 
 function verifyCredentials(username,password,done){
 	//pretend this is using a real database
-	if(username === password){
-		console.log("usrname pass equal");
-		return done( null , {id: username, name: username});
-	} else {
-		console.log("usrname pass not equal");
-		done(null,null);
-	}
+	var obj = {"username": username};
+	console.log(obj);
+	User.find(obj,function(err,usr){
+		if(err){
+			console.log("server error");
+			return done(null,null);
+		}
+		else{
+		if (!(typeof(usr[0]) == typeof(undefined))) {
+			if(password == usr[0].password){
+			console.log("usrname pass equal");
+		return done( null , {id: username, name: username});}
+		else {
+			console.log("username and password doesn't match");
+		return done(null,null);
+		}
+		}
+		else {
+		console.log("user invalid");
+		return done(null,null);
+	} }
+	});
+	// if(username === password){
+	// 	console.log("usrname pass equal");
+	// 	return done( null , {id: username, name: username});
+	// } else {
+	// 	console.log("usrname pass not equal");
+	// 	done(null,null);
+
+	// }
 }
 
 //step 11
@@ -81,6 +116,14 @@ app.get('/',function(req,res){
 	}); //and create index.ejs
 });
 
+//step 20
+app.get('/create',function(req,res){
+	res.render('create');
+	
+});
+
+
+
 //step 5
 
 app.get('/login',function(req,res){
@@ -102,7 +145,7 @@ function authorizeapi(req,res,next){
 		next();
 	}
 	else{
-		res.send(403);
+		res.redirect('/');
 	}
 }
 //step 13
@@ -117,8 +160,23 @@ app.get('/api/data',authorizeapi,function(req,res){
 });
 
 
+//step 21
+app.post('/create',function(req,res){
+	User.create(req.body,function(err,user){
+		if(err){
+			console.log(err+"User already exists");
+		}
+		else{
+			console.log(require('util').inspect(user));
+			res.redirect('/');
+		}
+	});
+});
+
 //step 6 and step 9
-app.post('/login',passport.authenticate('local'),function(req,res){
+app.post('/login',passport.authenticate('local',{
+	failureRedirect: '/'
+}),function(req,res){
   res.redirect('/');
 });
 
