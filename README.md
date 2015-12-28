@@ -5,4 +5,6 @@ using passport and passport-local npm modules.
 
 A login username and password of same value would make the app working.
 
-There is no need for explicit code for performing validations of user input since mongooose takes care of it. 
+There is no need for explicit code for performing validations of user input since mongoose takes care of it.
+
+Here we have secured our app using ssl.
